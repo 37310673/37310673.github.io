@@ -3,169 +3,322 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#080916">
+    <meta name="theme-color" content="#f9faf7">
     <title>Coming soon</title>
     <style>
       :root {
-        color-scheme: dark;
-        font-family: "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+        color-scheme: light;
+        --paper: #f9faf7;
+        --ink: #202824;
+        --accent: #297c67;
+        font-family: "Segoe UI", system-ui, sans-serif;
       }
 
       body {
         margin: 0;
-        background: #080916;
+        background: var(--paper);
+        color: var(--ink);
       }
 
       main {
         position: relative;
-        isolation: isolate;
         display: grid;
         min-height: 100vh;
-        min-height: 100svh;
-        overflow: hidden;
+        min-height: max(22rem, 100svh);
         place-items: center;
-        background:
-          radial-gradient(ellipse at 75% 71%, #171039 0, transparent 51%),
-          radial-gradient(ellipse at 16% 28%, #0c1a32 0, transparent 49%),
-          #080916;
-      }
-
-      .sky {
-        position: absolute;
-        z-index: -1;
-        inset: 0;
-        pointer-events: none;
-      }
-
-      .sky::before {
-        position: absolute;
-        inset: 0;
-        background:
-          radial-gradient(circle at 8% 33%, #93c7ef8c 0.7px, transparent 1.5px),
-          radial-gradient(circle at 15% 62%, #c2bdff66 0.8px, transparent 1.6px),
-          radial-gradient(circle at 22% 17%, #b3adff80 0.9px, transparent 1.8px),
-          radial-gradient(circle at 28% 78%, #9aa8ff66 0.6px, transparent 1.5px),
-          radial-gradient(circle at 35% 30%, #b5d5ff66 0.6px, transparent 1.5px),
-          radial-gradient(circle at 41% 13%, #b5d5ff5c 0.7px, transparent 1.5px),
-          radial-gradient(circle at 46% 83%, #bbadff6b 0.7px, transparent 1.5px),
-          radial-gradient(circle at 58% 18%, #9ca3ee4d 0.7px, transparent 1.5px),
-          radial-gradient(circle at 66% 88%, #b5d5ff66 0.7px, transparent 1.5px),
-          radial-gradient(circle at 72% 19%, #aabbff99 0.7px, transparent 1.5px),
-          radial-gradient(circle at 80% 63%, #d0bdff8c 0.8px, transparent 1.7px),
-          radial-gradient(circle at 88% 76%, #bcadf499 0.9px, transparent 1.7px),
-          radial-gradient(circle at 94% 46%, #94bcfe73 0.8px, transparent 1.6px);
-        content: "";
-      }
-
-      .orbit {
-        --spectrum: conic-gradient(
-          from 12deg,
-          #3c407020,
-          #4a4ba86b 14%,
-          #d09cff 27%,
-          #9258ff 33%,
-          #5231a240 48%,
-          #31529a20 62%,
-          #76e6ff 76%,
-          #688eff 83%,
-          #3c407020 100%
-        );
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: clamp(34rem, 83vw, 88rem);
-        aspect-ratio: 2.65;
-        transform: translate(-50%, -50%) rotate(-19deg);
-        animation: drift 18s ease-in-out infinite alternate;
-      }
-
-      .orbit::before {
-        position: absolute;
-        inset: -11%;
-        background: var(--spectrum);
-        mask-image: radial-gradient(ellipse farthest-side, transparent 60%, #000 81%, transparent 100%);
-        opacity: 0.27;
-        content: "";
-      }
-
-      .arc {
-        position: absolute;
-        background: var(--spectrum);
-        inset: 0;
-        border-radius: 50%;
-        mask-image: radial-gradient(
-          ellipse farthest-side,
-          transparent calc(100% - 4px),
-          #000 calc(100% - 2px),
-          #000 calc(100% - 1px),
-          transparent 100%
-        );
-      }
-
-      .echo {
-        inset: -10% -4%;
-        transform: rotate(3deg);
-        opacity: 0.4;
-      }
-
-      .trail {
-        inset: -23% -9%;
-        transform: rotate(5deg);
-        opacity: 0.19;
-      }
-
-      .light {
-        position: absolute;
-        inset: -45% -25%;
-        background:
-          radial-gradient(ellipse 18% 28% at 19% 42%, #5399ff38, transparent),
-          radial-gradient(ellipse 21% 32% at 76% 66%, #9764ff48, transparent);
-        mix-blend-mode: screen;
+        overflow: hidden;
       }
 
       h1 {
+        z-index: 1;
         margin: 0;
-        color: #f5f2ff;
-        font-size: clamp(3.2rem, 10.2vw, 9rem);
-        font-weight: 650;
+        font-size: clamp(2.75rem, 8vw, 7rem);
+        font-weight: 580;
         line-height: 1.1;
-        letter-spacing: -0.065em;
+        letter-spacing: -0.071em;
+        white-space: nowrap;
+        pointer-events: none;
       }
 
-      @supports (background-clip: text) {
-        h1 {
-          background: linear-gradient(176deg, #fff 23%, #eeeaff 53%, #b9b4f4 90%);
-          background-clip: text;
-          color: transparent;
-        }
+      canvas {
+        position: absolute;
+        width: min(100%, 66rem);
+        height: clamp(16rem, 65svh, 30rem);
+        cursor: crosshair;
       }
 
-      @keyframes drift {
-        to { transform: translate(-50%, -50%) rotate(-16deg) scale(1.045); }
+      .replay {
+        position: absolute;
+        inset-block-start: calc(50% + clamp(6.5rem, 27svh, 12rem));
+        inset-inline-start: 50%;
+        transform: translateX(-50%);
+        width: 2.75rem;
+        height: 2.75rem;
+        padding: 0;
+        border: 1px solid #dbe2db;
+        border-radius: 12px;
+        background: var(--paper);
+        color: var(--accent);
+        cursor: pointer;
+        transition: background-color 160ms ease, border-color 160ms ease;
       }
 
-      @media (max-width: 600px) {
-        .orbit {
-          aspect-ratio: 1.85;
-        }
+      .replay::before {
+        display: block;
+        width: 0.625rem;
+        height: 0.75rem;
+        margin: auto;
+        background: currentColor;
+        clip-path: polygon(0 0, 100% 50%, 0 100%);
+        content: "";
+      }
+
+      .replay:hover {
+        border-color: #a7c6b8;
+        background: #edf4ed;
+      }
+
+      .replay:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 4px;
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .orbit { animation: none; }
+        .replay { transition: none; }
       }
     </style>
   </head>
   <body>
     <main>
-      <div class="sky" aria-hidden="true">
-        <div class="orbit">
-          <div class="light"></div>
-          <div class="arc trail"></div>
-          <div class="arc echo"></div>
-          <div class="arc"></div>
-        </div>
-      </div>
+      <canvas aria-hidden="true"></canvas>
       <h1>Coming soon</h1>
+      <button class="replay" type="button" aria-label="Replay the pathfinding demo"
+        title="Replay the pathfinding demo" hidden></button>
     </main>
+
+    <script>
+      const canvas = document.querySelector("canvas");
+      const context = canvas.getContext("2d");
+      const heading = document.querySelector("h1");
+      const replay = document.querySelector(".replay");
+      const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+      const ink = "#36816d";
+      const spacing = 24;
+
+      const obstaclePatterns = [
+        { at: [0.19, 0.65], offsets: [[0, 0], [1, 0], [0, 1]] },
+        { at: [0.41, 0.24], offsets: [[0, 0], [1, 0], [1, 1]] },
+        { at: [0.63, 0.76], offsets: [[0, 0], [0, 1], [1, 1]] },
+        { at: [0.81, 0.26], offsets: [[0, 0], [1, 0]] }
+      ];
+
+      let width, height, columns, rows, cells, start, goal, path;
+      let pointer = null;
+      let progress = 0;
+      let frame;
+
+      function closestOpenCell(x, y) {
+        let nearest = -1;
+        let best = Infinity;
+        for (const [index, cell] of cells.entries()) {
+          const distance = (x - cell.x) ** 2 + (y - cell.y) ** 2;
+          if (!cell.blocked && distance < best) {
+            nearest = index;
+            best = distance;
+          }
+        }
+        return nearest;
+      }
+
+      function findPath() {
+        // Breadth-first search keeps each route as short as the grid allows.
+        const queue = [start];
+        const previous = new Int32Array(cells.length).fill(-1);
+        previous[start] = start;
+
+        for (let head = 0; head < queue.length; head++) {
+          const index = queue[head];
+          if (index === goal) break;
+          const { column, row } = cells[index];
+          const neighbors = [
+            [column + 1, row], [column, row + 1],
+            [column - 1, row], [column, row - 1]
+          ];
+          for (const [x, y] of neighbors) {
+            if (x < 0 || x >= columns || y < 0 || y >= rows) continue;
+            const next = y * columns + x;
+            if (previous[next] !== -1 || cells[next].blocked) continue;
+            previous[next] = index;
+            queue.push(next);
+          }
+        }
+
+        if (previous[goal] === -1) return [];
+        const route = [cells[goal]];
+        for (let next = goal; next !== start;) {
+          next = previous[next];
+          route.push(cells[next]);
+        }
+        return route.reverse();
+      }
+
+      function drawRoute() {
+        if (path.length > 1) {
+          context.beginPath();
+          context.moveTo(path[0].x, path[0].y);
+          for (const cell of path.slice(1)) context.lineTo(cell.x, cell.y);
+          context.lineJoin = "round";
+          context.lineCap = "round";
+          context.lineWidth = 1;
+          context.strokeStyle = "#bccfc3";
+          context.stroke();
+
+          const length = (path.length - 1) * spacing;
+          if (progress > 0) {
+            context.setLineDash([length * progress, length + spacing]);
+            context.strokeStyle = ink;
+            context.lineWidth = 1.5;
+            context.stroke();
+            context.setLineDash([]);
+          }
+
+          if (progress > 0 && progress < 1) {
+            const step = (path.length - 1) * progress;
+            const index = Math.floor(step);
+            const from = path[index];
+            const to = path[index + 1];
+            const fraction = step - index;
+            const x = from.x + (to.x - from.x) * fraction;
+            const y = from.y + (to.y - from.y) * fraction;
+            context.fillStyle = ink;
+            context.fillRect(x - 2.5, y - 2.5, 5, 5);
+          }
+        }
+
+        const source = cells[start];
+        const destination = cells[goal];
+        context.fillStyle = ink;
+        context.beginPath();
+        context.arc(source.x, source.y, 3.5, 0, Math.PI * 2);
+        context.fill();
+
+        context.lineWidth = 1.25;
+        context.strokeStyle = ink;
+        context.fillStyle = "#f9faf7";
+        context.fillRect(destination.x - 4, destination.y - 4, 8, 8);
+        context.strokeRect(destination.x - 4, destination.y - 4, 8, 8);
+      }
+
+      function draw() {
+        context.clearRect(0, 0, width, height);
+        for (const cell of cells) {
+          const distanceFromEdge = Math.min(cell.x, width - cell.x, cell.y, height - cell.y);
+          context.globalAlpha = Math.min(distanceFromEdge / 64, 1);
+          if (cell.obstacle) {
+            context.fillStyle = "#dce4dc";
+            context.fillRect(cell.x - 4, cell.y - 4, 8, 8);
+          } else if (!cell.blocked) {
+            context.fillStyle = "#c7d2c9";
+            context.fillRect(cell.x - 0.75, cell.y - 0.75, 1.5, 1.5);
+          }
+        }
+        context.globalAlpha = 1;
+        drawRoute();
+
+        if (pointer) {
+          context.beginPath();
+          context.arc(pointer.x, pointer.y, 6, 0, Math.PI * 2);
+          context.lineWidth = 1;
+          context.strokeStyle = "#80aa99";
+          context.stroke();
+        }
+      }
+
+      function animateRoute() {
+        cancelAnimationFrame(frame);
+        path = findPath();
+        progress = reducedMotion.matches ? 1 : 0;
+        draw();
+
+        if (progress === 1) return;
+        const duration = Math.min(950, 220 + path.length * 24);
+        let began;
+        function tick(now) {
+          began ??= now;
+          progress = Math.min((now - began) / duration, 1);
+          draw();
+          if (progress < 1) frame = requestAnimationFrame(tick);
+        }
+        frame = requestAnimationFrame(tick);
+      }
+
+      function resize() {
+        const bounds = canvas.getBoundingClientRect();
+        const title = heading.getBoundingClientRect();
+        width = bounds.width;
+        height = bounds.height;
+        columns = Math.max(2, Math.floor(width / spacing) - 1);
+        rows = Math.max(2, Math.floor(height / spacing) - 1);
+
+        const scale = Math.min(devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * scale);
+        canvas.height = Math.round(height * scale);
+        context.setTransform(scale, 0, 0, scale, 0, 0);
+
+        const obstacles = new Set();
+        for (const { at: [x, y], offsets } of obstaclePatterns) {
+          for (const [dx, dy] of offsets) {
+            const column = Math.round(x * (columns - 1)) + dx;
+            const row = Math.round(y * (rows - 1)) + dy;
+            if (column < columns && row < rows) obstacles.add(row * columns + column);
+          }
+        }
+
+        cells = Array.from({ length: columns * rows }, (_, index) => {
+          const column = index % columns;
+          const row = Math.floor(index / columns);
+          const x = (width - spacing * (columns - 1)) / 2 + column * spacing;
+          const y = (height - spacing * (rows - 1)) / 2 + row * spacing;
+          const obstacle = obstacles.has(index);
+          const behindTitle = x + bounds.left > title.left - 25 &&
+            x + bounds.left < title.right + 25 &&
+            y + bounds.top > title.top - 13 && y + bounds.top < title.bottom + 13;
+          return { x, y, column, row, obstacle: obstacle && !behindTitle, blocked: obstacle || behindTitle };
+        });
+
+        start = closestOpenCell(width * 0.13, height * 0.30);
+        goal = closestOpenCell(width * 0.85, height * 0.70);
+        pointer = null;
+        animateRoute();
+      }
+
+      if (context) {
+        new ResizeObserver(resize).observe(canvas);
+        canvas.addEventListener("pointermove", (event) => {
+          if (!cells || event.pointerType === "touch") return;
+          const cell = cells[closestOpenCell(event.offsetX, event.offsetY)];
+          pointer = Math.hypot(cell.x - event.offsetX, cell.y - event.offsetY) < spacing ? cell : null;
+          draw();
+        });
+        canvas.addEventListener("pointerleave", () => {
+          if (!cells) return;
+          pointer = null;
+          draw();
+        });
+        canvas.addEventListener("click", (event) => {
+          if (!cells) return;
+          goal = closestOpenCell(event.offsetX, event.offsetY);
+          pointer = null;
+          animateRoute();
+        });
+        replay.addEventListener("click", () => {
+          if (cells) animateRoute();
+        });
+        replay.hidden = false;
+        reducedMotion.addEventListener("change", () => {
+          if (cells) animateRoute();
+        });
+      }
+    </script>
   </body>
 </html>
