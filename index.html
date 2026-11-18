@@ -3,24 +3,169 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#080916">
     <title>Coming soon</title>
     <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+      }
+
       body {
+        margin: 0;
+        background: #080916;
+      }
+
+      main {
+        position: relative;
+        isolation: isolate;
         display: grid;
         min-height: 100vh;
-        margin: 0;
+        min-height: 100svh;
+        overflow: hidden;
         place-items: center;
-        background: #fff;
-        color: #444;
-        font: 1.125rem system-ui, sans-serif;
+        background:
+          radial-gradient(ellipse at 75% 71%, #171039 0, transparent 51%),
+          radial-gradient(ellipse at 16% 28%, #0c1a32 0, transparent 49%),
+          #080916;
       }
+
+      .sky {
+        position: absolute;
+        z-index: -1;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .sky::before {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 8% 33%, #93c7ef8c 0.7px, transparent 1.5px),
+          radial-gradient(circle at 15% 62%, #c2bdff66 0.8px, transparent 1.6px),
+          radial-gradient(circle at 22% 17%, #b3adff80 0.9px, transparent 1.8px),
+          radial-gradient(circle at 28% 78%, #9aa8ff66 0.6px, transparent 1.5px),
+          radial-gradient(circle at 35% 30%, #b5d5ff66 0.6px, transparent 1.5px),
+          radial-gradient(circle at 41% 13%, #b5d5ff5c 0.7px, transparent 1.5px),
+          radial-gradient(circle at 46% 83%, #bbadff6b 0.7px, transparent 1.5px),
+          radial-gradient(circle at 58% 18%, #9ca3ee4d 0.7px, transparent 1.5px),
+          radial-gradient(circle at 66% 88%, #b5d5ff66 0.7px, transparent 1.5px),
+          radial-gradient(circle at 72% 19%, #aabbff99 0.7px, transparent 1.5px),
+          radial-gradient(circle at 80% 63%, #d0bdff8c 0.8px, transparent 1.7px),
+          radial-gradient(circle at 88% 76%, #bcadf499 0.9px, transparent 1.7px),
+          radial-gradient(circle at 94% 46%, #94bcfe73 0.8px, transparent 1.6px);
+        content: "";
+      }
+
+      .orbit {
+        --spectrum: conic-gradient(
+          from 12deg,
+          #3c407020,
+          #4a4ba86b 14%,
+          #d09cff 27%,
+          #9258ff 33%,
+          #5231a240 48%,
+          #31529a20 62%,
+          #76e6ff 76%,
+          #688eff 83%,
+          #3c407020 100%
+        );
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: clamp(34rem, 83vw, 88rem);
+        aspect-ratio: 2.65;
+        transform: translate(-50%, -50%) rotate(-19deg);
+        animation: drift 18s ease-in-out infinite alternate;
+      }
+
+      .orbit::before {
+        position: absolute;
+        inset: -11%;
+        background: var(--spectrum);
+        mask-image: radial-gradient(ellipse farthest-side, transparent 60%, #000 81%, transparent 100%);
+        opacity: 0.27;
+        content: "";
+      }
+
+      .arc {
+        position: absolute;
+        background: var(--spectrum);
+        inset: 0;
+        border-radius: 50%;
+        mask-image: radial-gradient(
+          ellipse farthest-side,
+          transparent calc(100% - 4px),
+          #000 calc(100% - 2px),
+          #000 calc(100% - 1px),
+          transparent 100%
+        );
+      }
+
+      .echo {
+        inset: -10% -4%;
+        transform: rotate(3deg);
+        opacity: 0.4;
+      }
+
+      .trail {
+        inset: -23% -9%;
+        transform: rotate(5deg);
+        opacity: 0.19;
+      }
+
+      .light {
+        position: absolute;
+        inset: -20% -5%;
+        background:
+          radial-gradient(ellipse at 12% 39%, #5399ff36, transparent 27%),
+          radial-gradient(ellipse at 84% 72%, #9764ff48, transparent 30%);
+        mix-blend-mode: screen;
+      }
+
       h1 {
         margin: 0;
-        font: inherit;
+        color: #f5f2ff;
+        font-size: clamp(3.2rem, 10.2vw, 9rem);
+        font-weight: 650;
+        line-height: 1.1;
+        letter-spacing: -0.065em;
+      }
+
+      @supports (background-clip: text) {
+        h1 {
+          background: linear-gradient(176deg, #fff 23%, #eeeaff 53%, #b9b4f4 90%);
+          background-clip: text;
+          color: transparent;
+        }
+      }
+
+      @keyframes drift {
+        to { transform: translate(-50%, -50%) rotate(-16deg) scale(1.045); }
+      }
+
+      @media (max-width: 600px) {
+        .orbit {
+          aspect-ratio: 1.85;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .orbit { animation: none; }
       }
     </style>
   </head>
   <body>
-    <main><h1>Coming soon</h1></main>
+    <main>
+      <div class="sky" aria-hidden="true">
+        <div class="orbit">
+          <div class="light"></div>
+          <div class="arc trail"></div>
+          <div class="arc echo"></div>
+          <div class="arc"></div>
+        </div>
+      </div>
+      <h1>Coming soon</h1>
+    </main>
   </body>
 </html>
