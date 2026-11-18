@@ -10,7 +10,6 @@
         color-scheme: light;
         --paper: #f9faf7;
         --ink: #202824;
-        --accent: #297c67;
         font-family: "Segoe UI", system-ui, sans-serif;
       }
 
@@ -45,62 +44,22 @@
         width: min(100%, 66rem);
         height: clamp(16rem, 65svh, 30rem);
         cursor: crosshair;
+        touch-action: manipulation;
       }
 
-      .replay {
-        position: absolute;
-        inset-block-start: calc(50% + clamp(6.5rem, 27svh, 12rem));
-        inset-inline-start: 50%;
-        transform: translateX(-50%);
-        width: 2.75rem;
-        height: 2.75rem;
-        padding: 0;
-        border: 1px solid #dbe2db;
-        border-radius: 12px;
-        background: var(--paper);
-        color: var(--accent);
-        cursor: pointer;
-        transition: background-color 160ms ease, border-color 160ms ease;
-      }
 
-      .replay::before {
-        display: block;
-        width: 0.625rem;
-        height: 0.75rem;
-        margin: auto;
-        background: currentColor;
-        clip-path: polygon(0 0, 100% 50%, 0 100%);
-        content: "";
-      }
-
-      .replay:hover {
-        border-color: #a7c6b8;
-        background: #edf4ed;
-      }
-
-      .replay:focus-visible {
-        outline: 2px solid currentColor;
-        outline-offset: 4px;
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .replay { transition: none; }
-      }
     </style>
   </head>
   <body>
     <main>
       <canvas aria-hidden="true"></canvas>
       <h1>Coming soon</h1>
-      <button class="replay" type="button" aria-label="Replay the pathfinding demo"
-        title="Replay the pathfinding demo" hidden></button>
     </main>
 
     <script>
       const canvas = document.querySelector("canvas");
       const context = canvas.getContext("2d");
       const heading = document.querySelector("h1");
-      const replay = document.querySelector(".replay");
       const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
       const ink = "#36816d";
       const spacing = 24;
@@ -113,7 +72,8 @@
       ];
 
       let width, height, columns, rows, cells, start, goal, path;
-      let pointer = null;
+      let hoveredGoal = null;
+      let hoverTimer;
       let progress = 0;
       let frame;
 
@@ -224,17 +184,10 @@
         }
         context.globalAlpha = 1;
         drawRoute();
-
-        if (pointer) {
-          context.beginPath();
-          context.arc(pointer.x, pointer.y, 6, 0, Math.PI * 2);
-          context.lineWidth = 1;
-          context.strokeStyle = "#80aa99";
-          context.stroke();
-        }
       }
 
-      function animateRoute() {
+      function traceTo(target) {
+        goal = target;
         cancelAnimationFrame(frame);
         path = findPath();
         progress = reducedMotion.matches ? 1 : 0;
@@ -245,7 +198,7 @@
         let began;
         function tick(now) {
           began ??= now;
-          progress = Math.min((now - began) / duration, 1);
+          progress = reducedMotion.matches ? 1 : Math.min((now - began) / duration, 1);
           draw();
           if (progress < 1) frame = requestAnimationFrame(tick);
         }
@@ -290,35 +243,43 @@
 
         start = closestOpenCell(width * 0.13, height * 0.30);
         goal = closestOpenCell(width * 0.85, height * 0.70);
-        pointer = null;
-        animateRoute();
+        clearHover();
+        cancelAnimationFrame(frame);
+        path = findPath();
+        progress = 0;
+        draw();
+      }
+
+      function clearHover() {
+        clearTimeout(hoverTimer);
+        hoveredGoal = null;
+      }
+
+      function followMouse(event) {
+        if (!cells || event.pointerType !== "mouse") return;
+        const target = closestOpenCell(event.offsetX, event.offsetY);
+        if (target === hoveredGoal) return;
+
+        const entered = hoveredGoal === null;
+        hoveredGoal = target;
+        clearTimeout(hoverTimer);
+        if (entered) {
+          traceTo(target);
+        } else if (target !== goal) {
+          // Pause briefly before retargeting so crossing multiple dots does not restart every trace.
+          hoverTimer = setTimeout(() => traceTo(target), 85);
+        }
       }
 
       if (context) {
         new ResizeObserver(resize).observe(canvas);
-        canvas.addEventListener("pointermove", (event) => {
-          if (!cells || event.pointerType === "touch") return;
-          const cell = cells[closestOpenCell(event.offsetX, event.offsetY)];
-          pointer = Math.hypot(cell.x - event.offsetX, cell.y - event.offsetY) < spacing ? cell : null;
-          draw();
-        });
-        canvas.addEventListener("pointerleave", () => {
-          if (!cells) return;
-          pointer = null;
-          draw();
-        });
+        canvas.addEventListener("pointerenter", followMouse);
+        canvas.addEventListener("pointermove", followMouse);
+        canvas.addEventListener("pointerleave", clearHover);
         canvas.addEventListener("click", (event) => {
-          if (!cells) return;
-          goal = closestOpenCell(event.offsetX, event.offsetY);
-          pointer = null;
-          animateRoute();
-        });
-        replay.addEventListener("click", () => {
-          if (cells) animateRoute();
-        });
-        replay.hidden = false;
-        reducedMotion.addEventListener("change", () => {
-          if (cells) animateRoute();
+          if (!cells || event.pointerType === "mouse") return;
+          clearHover();
+          traceTo(closestOpenCell(event.offsetX, event.offsetY));
         });
       }
     </script>
